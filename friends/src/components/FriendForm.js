@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import React from 'react'
+import { axiosWithAuth } from '../utils/axiosWithAuth'
 import { Form, Field, withFormik } from 'formik'
 import * as Yup from 'yup'
 
@@ -62,8 +62,8 @@ const FormikUserForm = withFormik({
       .required()
   }),
   handleSubmit(values, { setStatus, resetForm, setSubmitting }) {
-    axios
-      .post('http://localhost:5000/api/data', values)
+    axiosWithAuth()
+      .post('http://localhost:5000/api/friends', values)
       .then((res) => {
         setStatus(res.data)
         resetForm()
