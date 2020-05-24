@@ -1,74 +1,53 @@
 import React from 'react'
-// import moment from 'moment'
 import Loader from 'react-loader-spinner'
-import { axiosWithAuth } from '../utils/axiosWithAuth'
+import axiosWithAuth from '../utils/axiosWithAuth'
 
 import FriendForm from './FriendForm'
 
 class FriendList extends React.Component {
   state = {
-    friends: [],
-    fetchingData: false,
+    friends: []
   }
 
   componentDidMount() {
-    this.getData()
+    this.getFriends()
   }
 
-  getData = () => {
+  getFriends = () => {
     axiosWithAuth()
-      .get('http://localhost:5000/api/friends')
+      .get('/friends')
       .then(res => {
-        this.setState({
-          friends: res.data,
-        })
+        console.log('get friends:', res)
+        this.setState({ ...this.state, friends: res.data })
       })
-      .catch(err => console.log(err.response))
+      .catch(err => console.log('Error getting data:', err.response))
   }
 
   deleteFriend = id => {
     axiosWithAuth()
-      .delete(`http://localhost:5000/api/friends/${id}`)
+      .delete(`/friends/${id}`)
       .then(res => {
-        this.setState({ friends: res.data })
+        console.log('friend deleted:', res)
+        this.setState({ ...this.state, friends: res.data })
       })
-      .catch(err => console.log(err.response))
-  }
-
-  formatData = () => {
-    const formattedData = []
-    console.log('formatting', this.state.friends)
-    this.state.friends.forEach((id, index, arr) => {
-      if (price.location === 'US') {
-        formattedData.push({
-          date: moment(price.date).format('MMM'),
-          USPrice: price.price,
-          HawaiiPrice: arr[index + 1].price,
-        })
-      }
-    })
-    return formattedData
+      .catch(err => console.log('Error deleting friend', err.response))
   }
 
   render() {
-    // const friends = this.formatData()
     return (
-      <div className="gas-prices">
+      <div className="content">
         <div className="title-wrapper">
           <h2 className="top-title">~*` FRIENDS `*~</h2>
           <h3 className="bottom-title">Add new friends here:</h3>
           <FriendForm />
         </div>
-        <div className="">
-          <h3>TOP 8 FRIENDS AND MORE</h3>
-        </div>
-        {/* {this.state.friends ? (
-          <div className='key spinner'>
-            <Loader type='Puff' color='#204963' height='60' width='60' />
+        <h3>TOP 8 FRIENDS AND MORE</h3>
+        {this.state.friends.length === 0 ? (
+          <div className="key spinner">
+            <Loader type="Puff" color="#204963" height="60" width="60" />
             <p>Loading Data...</p>
           </div>
-        ) :  */}
-        {
+        ) : (
           <div className="friend-wrapper">
             {this.state.friends.map(friend => (
               <div className="friend" key={friend.email}>
@@ -81,7 +60,7 @@ class FriendList extends React.Component {
               </div>
             ))}
           </div>
-        }
+        )}
       </div>
     )
   }
